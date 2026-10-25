@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Runtime and sensitive data
+system.log
+*.log
+face_database*
+face_db*
+faces/
+enrollments/
+*.emb
+*.embedding
+.env
+.env.*
+secrets.*
+config.local.py
+
+# Local/editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated audio
+*.wav
+*.mp3
+*.tmp
+
+# Large model caches
+.buffalo_l/
+insightface/

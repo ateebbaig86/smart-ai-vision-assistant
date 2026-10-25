@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart AI Vision Assistant</title>
+
+    <style>
+:root{color-scheme:dark;--bg:#080d18;--panel:rgba(17,25,43,.88);--panel2:#10192b;--line:rgba(148,163,184,.17);--text:#edf4ff;--muted:#93a4bd;--cyan:#5eead4;--blue:#60a5fa;--violet:#a78bfa;--green:#4ade80;--amber:#fbbf24;--red:#fb7185;--radius:18px;--shadow:0 18px 45px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;width:100%;background:radial-gradient(ellipse at 48% -20%,rgba(59,130,246,.18),transparent 42%),radial-gradient(ellipse at 100% 20%,rgba(139,92,246,.11),transparent 30%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh;overflow:auto}button,input,select{font:inherit}button,select,input{outline-color:var(--cyan)}
+.header{position:sticky;top:0;z-index:10;min-height:76px;padding:15px clamp(16px,2.5vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(8,13,24,.84);border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.header h1{margin:0;display:flex;align-items:center;gap:12px;font-size:clamp(17px,1.5vw,23px);font-weight:750;letter-spacing:-.04em}.header h1:before{content:"✦";display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,rgba(94,234,212,.2),rgba(96,165,250,.2));border:1px solid rgba(94,234,212,.28);color:var(--cyan);font-size:21px;box-shadow:0 0 24px rgba(94,234,212,.09)}.header-controls{display:flex;align-items:center;justify-content:flex-end;gap:18px;flex-wrap:wrap}.system-status{display:flex;align-items:center;gap:9px;color:#d9e8f8;font-size:11px;font-weight:800;letter-spacing:.11em}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(74,222,128,.1),0 0 16px rgba(74,222,128,.6)}.language-control{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}.language-control select{min-width:145px;height:38px;padding:0 34px 0 12px;border:1px solid var(--line);border-radius:11px;background:#111a2b;color:var(--text)}.language-message{position:fixed;top:86px;right:20px;z-index:20;max-width:340px;padding:11px 14px;border:1px solid rgba(94,234,212,.25);border-radius:12px;background:#111a2b;box-shadow:var(--shadow);color:#c7f9ee;font-size:12px;display:none}
+.dashboard{width:min(1920px,100%);min-height:calc(100vh - 76px);margin:0 auto;padding:clamp(12px,1.6vw,24px);display:grid;grid-template-columns:minmax(245px,.82fr) minmax(380px,1.48fr) minmax(290px,1fr);grid-template-rows:minmax(190px,.9fr) minmax(180px,.85fr) minmax(190px,.95fr);gap:16px;align-items:stretch}.card{min-width:0;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(155deg,rgba(22,33,55,.92),rgba(12,19,33,.94));box-shadow:var(--shadow);position:relative}.card:before{content:"";position:absolute;top:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(148,210,255,.25),transparent);pointer-events:none}.card-title{min-height:49px;padding:0 17px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--line);color:#c3d2e8;font-size:10px;font-weight:850;letter-spacing:.14em;text-transform:uppercase}.card-title:before{content:"";width:7px;height:7px;border-radius:3px;background:var(--cyan);box-shadow:0 0 12px rgba(94,234,212,.4)}
+.camera-card{grid-column:2;grid-row:1 / span 3;display:flex;flex-direction:column}.camera-card .card-title{flex:0 0 49px}.camera-area{position:relative;flex:1;min-height:260px;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at center,rgba(37,99,235,.11),transparent 65%),#070c15;overflow:hidden}.camera-area:after{content:"SMART GLASSES  /  LIVE ASSIST";position:absolute;left:22px;top:18px;color:#8296b5;font-size:9px;font-weight:800;letter-spacing:.16em;pointer-events:none}#live-camera{display:block;width:100%!important;height:100%!important;max-width:100%;max-height:100%;object-fit:contain!important;border-radius:12px;background:#050810;border:1px solid rgba(148,163,184,.12)}.camera-telemetry{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;padding:12px;border-top:1px solid var(--line);background:rgba(8,14,25,.7)}.camera-metric{min-width:0;padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(19,29,48,.78)}.camera-metric span{display:block;margin-bottom:7px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.camera-metric strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f0f6ff;font-size:13px;font-variant-numeric:tabular-nums}.metric-good,.safe{color:var(--green)!important}.metric-bad,.critical{color:var(--red)!important}.metric-warn,.warning{color:var(--amber)!important}.metric-unknown{color:#c4d0e2!important}
+.status-card{grid-column:1;grid-row:1}.status-grid{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.status-box{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,rgba(27,41,65,.7),rgba(15,23,39,.75))}.status-label{margin-bottom:8px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.status-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(14px,1.15vw,19px);font-weight:750;letter-spacing:-.03em}.telemetry-hint{margin-top:6px;color:#7f92ad;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+.detections-card{grid-column:1;grid-row:2}.detections{height:calc(100% - 49px);padding:10px;overflow:auto}.detection-item{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:rgba(15,24,41,.72);font-size:12px}.detection-item strong{color:var(--cyan);font-size:12px}.detection-item small{color:var(--muted)}
+.gps-card{grid-column:1;grid-row:3}.gps-panel{padding:13px 15px}.gps-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:10px 0;font-size:11px}.gps-row span{flex:0 0 92px;color:var(--muted)}.gps-row strong,.gps-row a{min-width:0;overflow-wrap:anywhere;text-align:right;color:#e6efff}.gps-row a{color:var(--blue);text-decoration:none}.gps-row a:hover{text-decoration:underline}.map-link{display:block;margin-top:12px;padding:10px 12px;border:1px solid rgba(96,165,250,.28);border-radius:11px;background:rgba(59,130,246,.09);color:#a8ceff!important;text-align:center;font-size:11px;font-weight:750;text-decoration:none}.map-link[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.log-card{grid-column:3;grid-row:1;display:flex;flex-direction:column}.log-panel{flex:1;min-height:0;overflow:auto;padding:10px;background:rgba(5,10,19,.34);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px}.log-entry{padding:9px 8px;border-bottom:1px solid rgba(148,163,184,.09);line-height:1.5;overflow-wrap:anywhere}.log-time{color:#7085a3}.log-category{margin:0 5px;color:#7dd3fc;font-weight:800}.log-warning{color:var(--amber)}.log-error{color:var(--red)}
+.face-card{grid-column:3;grid-row:2}.face-card .status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.face-card .status-box{padding:11px 9px}.face-card .status-value{font-size:13px}.enrollment-card{grid-column:3;grid-row:3}.enrollment{padding:13px 15px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;gap:11px;align-items:center}.input-group{grid-column:1;grid-row:1}.input-group label{display:block;margin-bottom:7px;color:var(--muted);font-size:10px;font-weight:750}.input-group input{width:100%;height:39px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:#0a1220;color:var(--text);font-size:12px}.input-group input::placeholder{color:#62738e}.camera-options{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:9px;font-size:11px;color:#d5e2f5}.camera-options label{display:flex;align-items:center;gap:8px}.camera-options input{accent-color:var(--cyan)}.enrollment button{grid-column:2;grid-row:1 / span 2;align-self:center;min-height:40px;padding:0 14px;border:0;border-radius:11px;background:linear-gradient(135deg,#0fbaa7,#3b82f6);color:#06131e;font-size:11px;font-weight:850;white-space:nowrap;cursor:pointer;box-shadow:0 8px 22px rgba(45,212,191,.13);transition:transform .16s,filter .16s}.enrollment button:hover{filter:brightness(1.12);transform:translateY(-1px)}.enrollment button:disabled{opacity:.55;cursor:wait;transform:none}.progress-container{grid-column:1 / -1;grid-row:3}.progress-bar{height:7px;border-radius:20px;overflow:hidden;background:#1b2940}.progress-fill{width:0%;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--violet));transition:width .2s}.progress-text{margin-top:7px;color:var(--muted);font-size:10px}.enrollment-status{grid-column:1 / -1;min-height:14px;color:#a9bbd3;font-size:10px;line-height:1.4}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:rgba(5,10,19,.2)}::-webkit-scrollbar-thumb{border-radius:9px;background:#34445e}::-webkit-scrollbar-thumb:hover{background:#506785}
+@media(max-width:1250px){.dashboard{grid-template-columns:minmax(220px,.8fr) minmax(0,1.3fr);grid-template-rows:minmax(380px,auto) minmax(220px,auto) minmax(190px,auto) minmax(190px,auto)}.camera-card{grid-column:2;grid-row:1 / span 2}.status-card{grid-column:1;grid-row:1}.detections-card{grid-column:1;grid-row:2}.gps-card{grid-column:1;grid-row:3}.log-card{grid-column:1 / span 2;grid-row:4}.face-card{grid-column:1;grid-row:5}.enrollment-card{grid-column:2;grid-row:5}.dashboard{min-height:0}.camera-area{min-height:300px}}
+@media(max-width:760px){.header{position:relative;align-items:flex-start;flex-direction:column}.header-controls{width:100%;justify-content:space-between}.dashboard{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto;gap:12px}.camera-card,.status-card,.detections-card,.gps-card,.log-card,.face-card,.enrollment-card{grid-column:1;grid-row:auto}.camera-card{min-height:430px}.camera-area{min-height:300px;padding:14px}.camera-telemetry{grid-template-columns:repeat(2,minmax(0,1fr))}.status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.face-card .status-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.log-card{min-height:270px}.detections-card{min-height:190px}.gps-card,.enrollment-card{min-height:190px}.enrollment{grid-template-columns:minmax(0,1fr)}.enrollment button{grid-column:1;grid-row:auto;justify-self:start}.camera-options{grid-row:auto}.progress-container{grid-column:1}.enrollment-status{grid-column:1}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Desktop single-screen layout fix: keep the entire dashboard in the viewport. */
+@media (min-width: 1251px) and (min-height: 650px) {
+  html, body { width:100%; height:100%; min-height:0; overflow:hidden; }
+  body { height:100dvh; min-height:0; display:flex; flex-direction:column; }
+  .header { flex:0 0 76px; min-height:76px; }
+  .dashboard {
+    flex:1 1 auto;
+    height:calc(100dvh - 76px);
+    min-height:0;
+    grid-template-columns:minmax(220px,.82fr) minmax(340px,1.48fr) minmax(270px,1fr);
+    grid-template-rows:repeat(3,minmax(0,1fr));
+    gap:12px;
+    padding:12px;
+    overflow:hidden;
+  }
+  .card { min-height:0; }
+  .camera-card { grid-row:1 / span 3; }
+  .camera-area { min-height:0; padding:16px; }
+  .camera-telemetry { gap:6px; padding:8px; }
+  .camera-metric { padding:8px; }
+  .status-grid { min-height:0; padding:9px; gap:7px; }
+  .status-box { padding:9px; }
+  .detections { min-height:0; }
+  .gps-panel { padding:8px 12px; }
+  .gps-row { margin:7px 0; }
+  .map-link { margin-top:8px; padding:8px; }
+  .enrollment { padding:9px 12px; gap:7px; }
+  .input-group input { height:34px; }
+  .enrollment button { min-height:36px; padding:0 10px; }
+  .enrollment-status { font-size:9px; }
+}
+@media (min-width:1251px) and (max-height:649px) {
+  html, body { height:auto; min-height:100%; overflow:auto; }
+  .dashboard { min-height:570px; }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="header">
+
+        <h1>Smart AI Vision Assistant</h1>
+
+        <div class="header-controls">
+            <label class="language-control" for="speech-language">
+                <span>Speech language</span>
+                <select id="speech-language" aria-label="Speech language">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                </select>
+            </label>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+        </div>
+        <div id="language-message" class="language-message" role="status" aria-live="polite"></div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN DASHBOARD
+         ===================================================== -->
+
+    <main class="dashboard">
+
+
+        <!-- =================================================
+             LIVE CAMERA
+             ================================================= -->
+
+        <section class="card camera-card">
+
+            <div class="card-title">
+                Smart Glasses · Live View
+            </div>
+
+            <div class="camera-area">
+                <img
+                    id="live-camera"
+                    src="/video_feed"
+                    alt="Live camera stream"
+                    style="width: 100%; height: 100%; object-fit: contain; display: block;"
+                >
+            </div>
+            <div class="camera-telemetry" aria-live="polite">
+                <div class="camera-metric"><span>Camera FPS</span><strong id="camera-fps">--</strong></div>
+                <div class="camera-metric"><span>Processing latency</span><strong id="processing-latency">-- ms</strong></div>
+                <div class="camera-metric"><span>Camera status</span><strong id="camera-connection" class="metric-unknown">CHECKING</strong></div>
+                <div class="camera-metric"><span>AI status</span><strong id="ai-status" class="metric-unknown">STARTING</strong></div>
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SYSTEM LOG
+             ================================================= -->
+
+        <section class="card log-card">
+
+            <div class="card-title">
+                System Log
+            </div>
+
+            <div class="log-panel">
+
+                <div class="log-entry">
+
+                    <span class="log-time">
+                        --:--:--
+                    </span>
+
+                    <span class="log-category">
+                        [SYSTEM]
+                    </span>
+
+                    Waiting for system events...
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SYSTEM STATUS
+             ================================================= -->
+
+        <section class="card status-card">
+
+            <div class="card-title">
+                System Status
+            </div>
+
+            <div class="status-grid">
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        Distance
+                    </div>
+
+                    <div class="status-value safe" id="distance-value">-- cm</div>
+                    <div class="telemetry-hint" id="distance-hint">Waiting for ESP32 sensor…</div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        Proximity
+                    </div>
+
+                    <div class="status-value safe" id="proximity-value">WAITING
+                    </div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        TTS
+                    </div>
+
+                    <div class="status-value" id="tts-value">READY
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </section>
+
+        <section class="card gps-card" aria-label="GPS location">
+            <div class="card-title">GPS Location</div>
+            <div class="gps-panel">
+                <div class="gps-row"><span>Latitude</span><a id="gps-lat" href="#" target="_blank" rel="noopener">Waiting for fix</a></div>
+                <div class="gps-row"><span>Longitude</span><a id="gps-lon" href="#" target="_blank" rel="noopener">Waiting for fix</a></div>
+                <div class="gps-row"><span>Accuracy / age</span><strong id="gps-meta">--</strong></div>
+                <div class="gps-row"><span>Alarm / buzzer</span><strong id="alarm-value">UNKNOWN</strong></div>
+                <div class="gps-row"><span>GPS status</span><strong id="gps-status">Waiting for GPSLogger fix</strong></div>
+                <a class="map-link" id="gps-map-link" href="#" target="_blank" rel="noopener" aria-disabled="true">Open location in map ↗</a>
+            </div>
+        </section>
+
+
+        <!-- =================================================
+             FACE RECOGNITION
+             ================================================= -->
+
+        <section class="card face-card">
+
+            <div class="card-title">
+                Face Recognition
+            </div>
+
+            <div class="status-grid">
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        Person
+                    </div>
+
+                    <div class="status-value" id="face-person">--</div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        Similarity
+                    </div>
+
+                    <div class="status-value" id="face-similarity">--</div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-label">
+                        Status
+                    </div>
+
+                    <div class="status-value" id="face-status">Waiting</div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DETECTED OBJECTS
+             ================================================= -->
+
+        <section class="card detections-card">
+
+            <div class="card-title" style="justify-content:space-between; gap:8px;">
+                <span>Detected Objects</span><small id="detections-total" style="font-size:10px;color:#8f98a8;font-weight:normal;">0 objects currently visible</small>
+            </div>
+
+            <div class="detections" id="detections-list">
+
+                <div class="detection-item">
+
+                    <span>
+                        Waiting for detections...
+                    </span>
+
+                    <span>
+                        --
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FACE ENROLLMENT
+             ================================================= -->
+
+        <section class="card enrollment-card">
+
+            <div class="card-title">
+                Face Enrollment
+            </div>
+
+            <div class="enrollment">
+
+
+                <div class="input-group">
+
+                    <label for="person-name">
+                        Person Name
+                    </label>
+
+                    <input
+                        id="person-name"
+                        type="text"
+                        placeholder="Enter person's name"
+                    >
+
+                </div>
+
+
+                <div class="camera-options">
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="camera-source"
+                            value="esp32"
+                            checked
+                        >
+
+                        Smart Glasses / Head-Mounted Camera (ESP32-CAM)
+
+                    </label>
+
+                </div>
+
+
+                <button id="enrollment-button" type="button">Start Enrollment</button>
+                <div id="enrollment-status" class="enrollment-status" role="status">Enter a name to enroll from the connected smart-glasses camera.</div>
+
+
+                <div class="progress-container">
+
+                    <div class="progress-bar">
+
+                        <div class="progress-fill" id="enrollment-progress"></div>
+
+                    </div>
+
+                    <div class="progress-text" id="enrollment-progress-text">Samples: 0 / 5</div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         LIVE SYSTEM LOG JAVASCRIPT
+         ===================================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+
+                /* MULTILINGUAL SPEECH LANGUAGE SETTING */
+                const languageSelect = document.getElementById("speech-language");
+                const languageMessage = document.getElementById("language-message");
+
+                function showLanguageMessage(message, isError = false) {
+                    if (!languageMessage) return;
+                    languageMessage.textContent = message;
+                    languageMessage.style.color = isError ? "#ff8b8b" : "#9be7b1";
+                    languageMessage.style.display = "block";
+                    window.clearTimeout(showLanguageMessage.timer);
+                    showLanguageMessage.timer = window.setTimeout(() => {
+                        languageMessage.style.display = "none";
+                    }, 3500);
+                }
+
+                async function loadSpeechLanguage() {
+                    try {
+                        const response = await fetch("/api/language", { cache: "no-store" });
+                        if (!response.ok) throw new Error("HTTP " + response.status);
+                        const data = await response.json();
+                        if (data.success && ["en", "hi", "kn"].includes(data.language)) {
+                            languageSelect.value = data.language;
+                        }
+                    } catch (error) {
+                        console.warn("[DASHBOARD] Could not load speech language:", error);
+                    }
+                }
+
+                async function saveSpeechLanguage() {
+                    const language = languageSelect.value;
+                    languageSelect.disabled = true;
+                    try {
+                        const response = await fetch("/api/language", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ language })
+                        });
+                        const data = await response.json();
+                        if (!response.ok || !data.success) {
+                            throw new Error(data.error || ("HTTP " + response.status));
+                        }
+                        showLanguageMessage(data.speech_engine_integrated
+                            ? ("Speech language set to " + data.label + ".")
+                            : (data.label + " preference saved; speech-engine integration is next."));
+                    } catch (error) {
+                        showLanguageMessage("Language setting endpoint is not available yet.", true);
+                        console.error("[DASHBOARD] Language update failed:", error);
+                    } finally {
+                        languageSelect.disabled = false;
+                    }
+                }
+
+                if (languageSelect) {
+                    languageSelect.addEventListener("change", saveSpeechLanguage);
+                    loadSpeechLanguage();
+                }
+
+                /* =================================================
+                   GET LOG PANEL
+                   ================================================= */
+
+                const logPanel =
+                    document.querySelector(
+                        ".log-panel"
+                    );
+
+
+                if (!logPanel) {
+
+                    console.error(
+                        "[DASHBOARD] Log panel not found."
+                    );
+
+                    return;
+                }
+
+
+                /* =================================================
+                   ADD ONE LOG ENTRY
+                   ================================================= */
+
+                function addLogEntry(event) {
+
+                    if (!event) {
+                        return;
+                    }
+
+
+                    const entry =
+                        document.createElement(
+                            "div"
+                        );
+
+                    entry.className =
+                        "log-entry";
+
+
+                    /* -------------------------------
+                       TIME
+                       ------------------------------- */
+
+                    const time =
+                        document.createElement(
+                            "span"
+                        );
+
+                    time.className =
+                        "log-time";
+
+                    time.textContent =
+                        event.timestamp ||
+                        "--:--:--";
+
+
+                    /* -------------------------------
+                       CATEGORY
+                       ------------------------------- */
+
+                    const category =
+                        document.createElement(
+                            "span"
+                        );
+
+                    category.className =
+                        "log-category";
+
+                    category.textContent =
+                        "[" +
+                        (
+                            event.category ||
+                            "SYSTEM"
+                        ) +
+                        "]";
+
+
+                    /* -------------------------------
+                       LOG LEVEL STYLING
+                       ------------------------------- */
+
+                    const level =
+                        String(
+                            event.level ||
+                            "INFO"
+                        ).toUpperCase();
+
+
+                    if (
+                        level === "WARNING"
+                    ) {
+
+                        category.classList.add(
+                            "log-warning"
+                        );
+
+                    }
+
+
+                    if (
+                        level === "ERROR" ||
+                        level === "CRITICAL"
+                    ) {
+
+                        category.classList.add(
+                            "log-error"
+                        );
+
+                    }
+
+
+                    /* -------------------------------
+                       MESSAGE
+                       ------------------------------- */
+
+                    const message =
+                        document.createTextNode(
+                            " " +
+                            (
+                                event.message ||
+                                ""
+                            )
+                        );
+
+
+                    /* -------------------------------
+                       BUILD ENTRY
+                       ------------------------------- */
+
+                    entry.appendChild(
+                        time
+                    );
+
+                    entry.appendChild(
+                        document.createTextNode(
+                            " "
+                        )
+                    );
+
+                    entry.appendChild(
+                        category
+                    );
+
+                    entry.appendChild(
+                        message
+                    );
+
+
+                    logPanel.appendChild(
+                        entry
+                    );
+
+
+                    /* =================================================
+                       LIMIT LOG ENTRIES
+                       ================================================= */
+
+                    while (
+                        logPanel.children.length >
+                        200
+                    ) {
+
+                        logPanel.removeChild(
+                            logPanel.firstElementChild
+                        );
+
+                    }
+
+
+                    /* =================================================
+                       AUTO SCROLL
+                       ================================================= */
+
+                    const nearBottom =
+                        logPanel.scrollHeight -
+                        logPanel.scrollTop -
+                        logPanel.clientHeight <
+                        80;
+
+
+                    if (nearBottom) {
+
+                        logPanel.scrollTop =
+                            logPanel.scrollHeight;
+
+                    }
+
+                }
+
+
+                /* =================================================
+                   LOAD EXISTING LOG HISTORY
+                   ================================================= */
+
+                async function loadLogHistory() {
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/logs"
+                            );
+
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                "HTTP " +
+                                response.status
+                            );
+
+                        }
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (
+                            !data.success ||
+                            !Array.isArray(
+                                data.events
+                            )
+                        ) {
+
+                            console.warn(
+                                "[DASHBOARD] " +
+                                "Invalid log history."
+                            );
+
+                            return;
+                        }
+
+
+                        /* -------------------------------
+                           Remove placeholder
+                           ------------------------------- */
+
+                        logPanel.innerHTML = "";
+
+
+                        /* -------------------------------
+                           Display history
+                           ------------------------------- */
+
+                        data.events.forEach(
+                            function (event) {
+
+                                addLogEntry(
+                                    event
+                                );
+
+                            }
+                        );
+
+
+                        /* -------------------------------
+                           No history
+                           ------------------------------- */
+
+                        if (
+                            data.events.length === 0
+                        ) {
+
+                            const entry =
+                                document.createElement(
+                                    "div"
+                                );
+
+                            entry.className =
+                                "log-entry";
+
+                            entry.textContent =
+                                "Waiting for system events...";
+
+                            logPanel.appendChild(
+                                entry
+                            );
+
+                        }
+
+
+                        logPanel.scrollTop =
+                            logPanel.scrollHeight;
+
+
+                        console.log(
+                            "[DASHBOARD] Loaded " +
+                            data.events.length +
+                            " historical events."
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "[DASHBOARD] " +
+                            "Failed to load logs:",
+                            error
+                        );
+
+                    }
+
+                }
+
+
+                /* =================================================
+                   CONNECT TO LIVE SERVER-SENT EVENTS
+                   ================================================= */
+
+                function connectLiveLogs() {
+
+                    console.log(
+                        "[DASHBOARD] " +
+                        "Connecting to live log stream..."
+                    );
+
+
+                    const eventSource =
+                        new EventSource(
+                            "/api/logs/stream"
+                        );
+
+
+                    /* -------------------------------
+                       CONNECTION OPEN
+                       ------------------------------- */
+
+                    eventSource.onopen =
+                        function () {
+
+                            console.log(
+                                "[DASHBOARD] " +
+                                "Live log stream connected."
+                            );
+
+                        };
+
+
+                    /* -------------------------------
+                       NEW EVENT
+                       ------------------------------- */
+
+                    eventSource.onmessage =
+                        function (event) {
+
+                            try {
+
+                                const logEvent =
+                                    JSON.parse(
+                                        event.data
+                                    );
+
+
+                                addLogEntry(
+                                    logEvent
+                                );
+
+
+                            } catch (error) {
+
+                                console.error(
+                                    "[DASHBOARD] " +
+                                    "Invalid live log event:",
+                                    error
+                                );
+
+                            }
+
+                        };
+
+
+                    /* -------------------------------
+                       CONNECTION ERROR
+                       ------------------------------- */
+
+                    eventSource.onerror =
+                        function () {
+
+                            console.warn(
+                                "[DASHBOARD] " +
+                                "Live log stream disconnected. " +
+                                "Browser will retry automatically."
+                            );
+
+                        };
+
+                }
+
+
+                /* =================================================
+                   START LOG SYSTEM
+                   ================================================= */
+
+                loadLogHistory();
+
+                connectLiveLogs();
+
+
+            }
+        );
+
+    
+        // Live telemetry, GPS, rolling detections, face recognition and enrollment.
+        (function () {
+          const byId = (id) => document.getElementById(id);
+          const esc = (value) => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+          function setText(id, value) { const el=byId(id); if(el) el.textContent=value; }
+          function updateGps(g) {
+            const valid = !!(g && g.valid && Number.isFinite(Number(g.latitude)) && Number.isFinite(Number(g.longitude)));
+            const lat = valid ? Number(g.latitude).toFixed(6) : null;
+            const lon = valid ? Number(g.longitude).toFixed(6) : null;
+            const mapUrl = valid ? `https://www.google.com/maps?q=${encodeURIComponent(lat+','+lon)}` : '#';
+            for (const id of ['gps-lat','gps-lon']) { const el=byId(id); el.textContent=valid?(id==='gps-lat'?lat:lon):(g?.message || 'Waiting for fix'); el.href=valid?mapUrl:'#'; }
+            const map=byId('gps-map-link'); map.href=mapUrl; map.setAttribute('aria-disabled', valid?'false':'true');
+            const accuracy = g?.accuracy_m == null || Number(g.accuracy_m)<0 ? 'accuracy unavailable' : `±${Number(g.accuracy_m).toFixed(1)} m`;
+            const age = g?.age_ms == null ? '' : ` · ${(Number(g.age_ms)/1000).toFixed(0)} s old`;
+            setText('gps-meta', valid ? accuracy+age : '--');
+            const gpsAge = g?.poll_age_seconds == null ? null : Math.round(Number(g.poll_age_seconds));
+            setText('gps-status', valid ? ((g.message || 'GPS fix received') + (gpsAge != null && gpsAge > 8 ? ' · reconnecting' : '')) : (g?.message || 'Waiting for GPSLogger fix'));
+          }
+          async function refreshDashboardData() {
+            try {
+              const response = await fetch('/api/dashboard-data', {cache:'no-store'});
+              const data = await response.json();
+              if (!response.ok || !data.success) throw new Error(data.message || ('HTTP '+response.status));
+              const d=data.distance||{};
+              setText('distance-value', d.distance_cm==null?'-- cm':Number(d.distance_cm).toFixed(1)+' cm');
+              const distanceAge = d.age_seconds == null ? null : Math.round(Number(d.age_seconds));
+              setText('distance-hint', d.sensor_ready===false ? 'ESP32 reports sensor not ready' : (distanceAge == null ? (d.error ? 'Waiting for ESP32 distance data' : 'Waiting for first reading') : ('Updated '+distanceAge+' s ago'+(d.error ? ' · reconnecting' : ''))));
+              const state=d.state||'UNKNOWN'; setText('proximity-value',state);
+              byId('proximity-value').className='status-value '+(state==='SAFE'?'safe':state==='WARNING'||state==='CAUTION'?'warning':state==='CRITICAL'?'critical':'');
+              setText('alarm-value', d.buzzer===true?'ACTIVE':d.buzzer===false?'OFF':(d.error?'UNAVAILABLE':'UNKNOWN'));
+              if (d.sensor_ready===false) setText('distance-hint','ESP32 reports sensor_ready=false');
+              byId('alarm-value').style.color=d.buzzer===true?'#ff6262':d.buzzer===false?'#35d07f':'#e8eaed';
+              const list=byId('detections-list'); const items=data.detections||[];
+              const totalNow=items.reduce((sum,x)=>sum+Number(x.count||0),0);
+              const heading=byId('detections-total'); if(heading) heading.textContent=`${totalNow} object${totalNow===1?'':'s'} currently visible`;
+              list.innerHTML=items.length?items.map(x=>`<div class="detection-item"><span>${esc(x.name)} <small style="color:#8f98a8">best ${Math.round((x.confidence||0)*100)}%</small></span><strong>× ${x.count||1}</strong></div>`).join(''):'<div class="detection-item"><span>No objects currently detected.</span><span>0</span></div>';
+              const c=data.camera||{};
+              setText('camera-fps', Number(c.camera_fps||0).toFixed(1));
+              setText('processing-latency', c.processing_latency_ms==null?'-- ms':`${Math.round(Number(c.processing_latency_ms))} ms`);
+              const cameraEl=byId('camera-connection'); const connected=c.camera_status==='CONNECTED';
+              setText('camera-connection',connected?'CONNECTED':'DISCONNECTED');
+              cameraEl.className=''; cameraEl.classList.add(connected?'metric-good':'metric-bad');
+              const aiEl=byId('ai-status'); const ai=String(c.ai_status||'UNKNOWN').toUpperCase(); setText('ai-status',ai);
+              aiEl.className=''; aiEl.classList.add(ai==='ONLINE'?'metric-good':ai==='PROCESSING'?'metric-warn':'metric-unknown');
+              const face=data.face||{}; setText('face-person',face.person||'--'); setText('face-similarity',face.similarity||'--'); setText('face-status',face.status||'Waiting');
+              updateGps(data.gps||{});
+              if (data.enrollment?.active) { setText('face-status','Enrollment mode'); }
+            } catch(error) { console.warn('[DASHBOARD] Telemetry refresh failed:',error); }
+          }
+          async function refreshEnrollment() {
+            try {
+              const response=await fetch('/api/enrollment/status',{cache:'no-store'}); const data=await response.json();
+              const s=data.status||{}, r=data.result||{}; const samples=Number(s.samples??r.samples??0), required=Number(s.required_samples??r.required_samples??5);
+              byId('enrollment-progress').style.width=Math.min(100,samples/Math.max(1,required)*100)+'%';
+              setText('enrollment-progress-text',`Samples: ${samples} / ${required}`);
+              const button=byId('enrollment-button'); button.textContent=s.active?'Cancel Enrollment':'Start Enrollment'; button.dataset.active=s.active?'1':'0';
+              if (r.message) setText('enrollment-status',r.message);
+            } catch(error) { console.warn('[DASHBOARD] Enrollment status failed:',error); }
+          }
+          byId('enrollment-button').addEventListener('click',async function(){
+            const button=this; button.disabled=true;
+            try {
+              let response;
+              if(button.dataset.active==='1') response=await fetch('/api/enrollment/cancel',{method:'POST'});
+              else { const name=byId('person-name').value.trim(); const source=document.querySelector('input[name="camera-source"]:checked')?.value||'esp32'; response=await fetch('/api/enrollment/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,source})}); }
+              const payload=await response.json(); if(!response.ok||!payload.success) throw new Error(payload.message||payload.error||('HTTP '+response.status));
+              setText('enrollment-status',payload.message||'Request accepted.'); await refreshEnrollment();
+            } catch(error){setText('enrollment-status',error.message);} finally{button.disabled=false;}
+          });
+          refreshDashboardData(); refreshEnrollment();
+          window.setInterval(refreshDashboardData,1000); window.setInterval(refreshEnrollment,500);
+        })();
+
+</script>
+
+
+</body>
+
+</html>

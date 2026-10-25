@@ -1,0 +1,178 @@
+SMART AI VISION ASSISTANT EDGE SYSTEM
+=====================================
+
+1. PACKAGE CONTENTS
+-------------------
+- Python application and web dashboard
+- Unified YOLO model (36 classes)
+- Hindi Piper TTS voice assets
+- ESP32-CAM and telemetry firmware sketch
+- Environment verification script and requirements reference
+
+2. REQUIREMENTS
+---------------
+- Windows 10/11, 64-bit
+- Python 3.11, 64-bit
+- VS Code with the Python extension
+- An existing Python environment containing the required project dependencies
+- ESP32-CAM and a configured network for live hardware functionality
+
+IMPORTANT:
+This package does not create a virtual environment or install packages.
+Use your team's existing Python environment. Do not assume that the
+development computer's .venv path exists on another computer.
+
+3. OPEN THE PROJECT
+-------------------
+1. Extract the ZIP into a writable folder.
+2. Open that extracted folder in VS Code:
+   File > Open Folder.
+3. Open Terminal > New Terminal and select PowerShell.
+4. Press Ctrl+Shift+P.
+5. Select "Python: Select Interpreter".
+6. Choose your existing Python 3.11, 64-bit environment.
+   Do not select a nonexistent .venv inside this project.
+
+To verify the selected interpreter, run:
+   python -c "import sys; print(sys.executable); print(sys.version)"
+
+Confirm that the executable belongs to the environment you intend to use.
+
+4. VERIFY AND START
+-------------------
+Run the verification script:
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+   .\setup_environment.ps1
+
+The script checks Python imports and required project assets. It does not
+install packages or change your environment.
+
+If the check fails:
+- Check the Python executable and VS Code interpreter selection.
+- If necessary, activate your team's existing environment in the terminal.
+- Rerun the verification script.
+- If a dependency is genuinely missing, contact your project lead to
+  resolve it according to your team's environment-management process.
+
+After the checks pass, launch the application:
+   python .\web_server.py
+
+Open the dashboard:
+   http://127.0.0.1:5000
+
+Keep the terminal running while using the dashboard. Press Ctrl+C in that
+terminal to stop the server.
+
+5. ESP32-CAM CONFIGURATION
+--------------------------
+The development configuration currently references ESP32 IP 10.107.88.117.
+This address may not be valid on another network.
+
+Before testing with hardware:
+- Open config.py and locate ESP32_IP and the related camera/telemetry URLs.
+- Replace the address with the current IP assigned to your ESP32.
+- Ensure the computer and ESP32 can communicate over the network.
+- Check that the firmware's Wi-Fi settings match your network.
+- Never include Wi-Fi passwords in shared documentation or ZIP files.
+
+Expected endpoints/ports:
+- Camera stream: http://<ESP32_IP>/stream
+- Camera server: port 80
+- Telemetry server: port 81
+
+If the firmware uses different endpoint paths, confirm them in the firmware
+before changing the Python configuration.
+
+6. GPS WORKFLOW
+---------------
+The current workflow uses a phone GPS Logger app to send location fixes
+to the ESP32. It does not rely on a dedicated GPS module in this workflow.
+
+Configure the app with the ESP32's reachable address and the GPS endpoint
+implemented by the project firmware. Location updates depend on the app
+sending valid fixes and the ESP32 receiving them.
+
+7. MODEL AND TTS ASSETS
+-----------------------
+YOLO model:
+   Unified_Model_30ep.pt
+
+The current config.py references this model in the project root. If the
+model is moved, update the configured model path.
+
+Hindi TTS assets:
+   tts-test\hi_IN-pratham-medium.onnx
+   indic-tts-main\models\hi_IN-pratham-medium.onnx.json
+
+Keep the voice model and its matching JSON configuration at the expected
+paths, or update the relevant TTS configuration in the application.
+
+InsightFace model files may be cached separately in the user's profile.
+A receiving computer may need those model assets available before
+face recognition can initialize. Follow your team's approved setup process.
+
+8. FACE RECOGNITION AND PRIVACY
+-------------------------------
+No face database is included in this handover package.
+
+Enroll people again on the receiving computer. Existing enrolled faces
+from the development computer will not automatically transfer.
+
+Face records and logs may be generated during runtime. Treat face data as
+sensitive information. Do not commit or distribute personal face records,
+generated logs, or Wi-Fi credentials.
+
+9. LOGS AND GENERATED FILES
+---------------------------
+The application may create system.log and a face database while running.
+These are runtime data, not required shared handover assets.
+
+Review generated files before creating or sharing another ZIP.
+
+10. TROUBLESHOOTING
+-------------------
+"No module named flask" or another import error:
+- Check which Python executable is active.
+- Select or activate the correct existing environment.
+- Run the verification script again.
+- Do not assume that plain "python" refers to the intended environment.
+
+Dashboard opens but the camera is unavailable:
+- The dashboard can start without the ESP32-CAM.
+- Check device power, network connectivity, ESP32 IP, stream URL and
+  firmware endpoint.
+- A connection timeout is expected when the hardware is disconnected.
+
+Dashboard opens but detections do not work:
+- Check the YOLO model path.
+- Review the terminal output and application logs.
+- Confirm that a working camera source is available.
+
+Speech is unavailable:
+- Check the Piper model and JSON configuration paths.
+- Review terminal output for TTS initialization errors.
+- Voice availability depends on the receiving computer's installed voices
+  and the application's configured fallback behavior.
+
+PowerShell blocks script execution:
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+This applies only to the current PowerShell process.
+
+11. VALIDATION STATUS
+---------------------
+Verified on the development computer:
+- Python environment and core imports
+- Required project assets
+- YOLO model loading
+- Flask server startup
+- Dashboard and several API endpoints responding
+
+Not verified in this hardware-free test:
+- Live ESP32-CAM streaming
+- ESP32 telemetry and GPS communication
+- Live camera detection performance
+- Hardware-dependent behavior on another computer
+
+The receiving team must test these functions with its own hardware and
+network configuration.

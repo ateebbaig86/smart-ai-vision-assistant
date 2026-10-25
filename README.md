@@ -94,7 +94,7 @@ This quick start is a guide, not a guarantee that every dependency will install 
 
 ## Speech-language notes
 
-The application supports language selection for English (`en`), Hindi (`hi`), and Kannada (`kn`). Hindi and Kannada neural text-to-speech can be configured using their respective Piper-compatible ONNX voice models and matching `.onnx.json` configuration files. The Hindi model is `hi_IN-pratham-medium`; the Kannada model is `kn_IN-syspin_male-medium`. These model files are not distributed with this repository and must be obtained separately from their original sources. See the links and licensing information below before downloading or using either model. English speech uses Windows native speech.
+The application supports English (`en`), Hindi (`hi`), and Kannada (`kn`) speech output. English uses Windows native speech. Hindi and Kannada use Piper-compatible neural TTS with their respective ONNX voice models and matching configuration files. If neural TTS fails to initialize or play, the application falls back to Windows native speech. The Hindi and Kannada model files are obtained separately from their original sources; see the download links and licensing notes below.
 
 ### TTS model downloads and licensing
 

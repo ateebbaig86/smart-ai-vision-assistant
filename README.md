@@ -47,7 +47,7 @@ flowchart TD
 - `Unified_Model_30ep.pt` — primary detector weights.
 - `INSTALL.txt` — fuller setup and troubleshooting notes.
 - `requirements.txt` — Python dependency reference.
-- `tts-test/` and `indic-tts-main/models/` — Hindi Piper voice model/configuration assets.
+- - `tts-test/` and `indic-tts-main/models/` — local TTS model/configuration paths. Voice models are not necessarily included in the public repository; download each required model and its matching configuration from the original source.
 
 ## Hardware
 
@@ -119,7 +119,7 @@ Place the downloaded model and configuration files in the TTS model directory ex
 
 - Camera streaming, telemetry, GPS workflow, detection performance, and voice availability depend on the local hardware, network, drivers, and installed speech voices.
 - The handover validation notes cover selected development-computer checks; they do not establish performance on every target system.
-- The bundled Hindi voice model is a large binary asset. If you prefer a lighter repository, keep large model weights as a separately documented release/download rather than committing them to Git history.
+- Hindi and Kannada neural voice models are large external assets obtained separately. Their availability and licensing must be checked before use or redistribution.
 
 ## Credits and contribution
 

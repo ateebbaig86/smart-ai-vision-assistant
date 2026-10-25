@@ -128,3 +128,13 @@ This project was developed as an engineering prototype integrating embedded hard
 ## License
 
 No license is declared yet. Until a license is added, others do not automatically receive permission to reuse, modify, or redistribute the project. Check the licenses for the model weights, TTS assets, and dependencies before choosing a repository license.
+
+## Copyright and permissions
+
+Copyright © 2026 Ateeb Baig. All rights reserved.
+
+This repository is publicly available for project review, educational evaluation, and feedback. No license is granted for general reuse, modification, redistribution, or commercial use of the project code.
+
+Please contact the author to request permission for any other use. Third-party components and assets remain subject to their respective licenses.
+
+Viewing or forking this repository on GitHub does not grant additional rights beyond those permitted by applicable law and GitHub's terms.

@@ -20,8 +20,11 @@ class TTSManager:
     def __init__(self, rate=1, volume=100, stale_after=2.0, max_object_messages=2):
         self.base_dir = Path(__file__).resolve().parent
         self.language = "en"
+        # Keep independent cached voices: Hindi and Kannada use different models.
         self._piper_voice = None
         self._piper_error = None
+        self._kannada_piper_voice = None
+        self._kannada_piper_error = None
         self._sherpa_tts = None
         self._sherpa_error = None
         self._language_lock = threading.Lock()
@@ -48,7 +51,7 @@ class TTSManager:
             daemon=True,
         )
         self._worker.start()
-        print("[TTS] Multilingual speech manager started (English native; Hindi Piper; Kannada model/voice fallback).")
+        print("[TTS] Multilingual speech manager started (English Windows; Hindi and Kannada offline Piper when models are present).")
 
     def set_language(self, language):
         """Set speech language: en, hi, or kn. Existing queued messages use the language active when spoken."""
@@ -96,11 +99,17 @@ class TTSManager:
                 "Unknown person.": "अज्ञात व्यक्ति सामने है।",
             },
             "kn": {
-                "Obstacle ahead. Please be careful.": "ಮುಂದೆ ಅಡ್ಡಿ ಇದೆ. ಜಾಗರೂಕರಾಗಿ ನಡೆಯಿರಿ.",
-                "Obstacle detected ahead. Please be careful.": "ಮುಂದೆ ಅಡ್ಡಿ ಇದೆ. ಜಾಗರೂಕರಾಗಿ ನಡೆಯಿರಿ.",
+                "Obstacle ahead. Please be careful.": "ಮುಂದೆ ಅಡ್ಡಿ ಇದೆ. ದಯವಿಟ್ಟು ಜಾಗರೂಕರಾಗಿ ನಡೆಯಿರಿ.",
+                "Obstacle detected ahead. Please be careful.": "ಮುಂದೆ ಅಡ್ಡಿ ಇದೆ. ದಯವಿಟ್ಟು ಜಾಗರೂಕರಾಗಿ ನಡೆಯಿರಿ.",
                 "Stop. Obstacle very close.": "ನಿಲ್ಲಿ. ಅಡ್ಡಿ ತುಂಬಾ ಹತ್ತಿರದಲ್ಲಿದೆ.",
                 "Person detected.": "ಮುಂದೆ ವ್ಯಕ್ತಿ ಇದ್ದಾರೆ.",
                 "Unknown person.": "ಅಪರಿಚಿತ ವ್ಯಕ್ತಿ ಮುಂದೆ ಇದ್ದಾರೆ.",
+                "Please stop. An obstacle is very close.": "ದಯವಿಟ್ಟು ನಿಲ್ಲಿ. ಅಡ್ಡಿ ತುಂಬಾ ಹತ್ತಿರದಲ್ಲಿದೆ.",
+                "Obstacle detected on your left.": "ನಿಮ್ಮ ಎಡಭಾಗದಲ್ಲಿ ಅಡ್ಡಿ ಪತ್ತೆಯಾಗಿದೆ.",
+                "Obstacle detected on your right.": "ನಿಮ್ಮ ಬಲಭಾಗದಲ್ಲಿ ಅಡ್ಡಿ ಪತ್ತೆಯಾಗಿದೆ.",
+                "Person on your left.": "ನಿಮ್ಮ ಎಡಭಾಗದಲ್ಲಿ ವ್ಯಕ್ತಿ ಇದ್ದಾರೆ.",
+                "Person on your right.": "ನಿಮ್ಮ ಬಲಭಾಗದಲ್ಲಿ ವ್ಯಕ್ತಿ ಇದ್ದಾರೆ.",
+                "Path clear.": "ಮುಂದಿನ ದಾರಿ ಖಾಲಿಯಾಗಿದೆ.",
             },
         }
         if text in exact.get(language, {}):
@@ -125,9 +134,26 @@ class TTSManager:
         self._piper_voice = PiperVoice.load(str(model), config_path=str(config), use_cuda=False)
         return self._piper_voice
 
-    def _play_piper(self, text, priority):
+    def _get_kannada_piper_voice(self):
+        """Load the project-local Kannada Piper ONNX model on first use."""
+        if self._kannada_piper_voice is not None:
+            return self._kannada_piper_voice
+        model = self.base_dir / "tts-test" / "kn_IN-syspin_male-medium.onnx"
+        config = self.base_dir / "tts-test" / "kn_IN-syspin_male-medium.onnx.json"
+        if not model.is_file() or not config.is_file():
+            raise FileNotFoundError(
+                f"Kannada Piper model/config not found: {model} ; {config}"
+            )
+        from piper import PiperVoice
+        self._kannada_piper_voice = PiperVoice.load(
+            str(model), config_path=str(config), use_cuda=False
+        )
+        print("[TTS] Kannada offline Piper voice loaded successfully.")
+        return self._kannada_piper_voice
+
+    def _play_piper(self, text, priority, language="hi"):
         import winsound
-        voice = self._get_piper_voice()
+        voice = self._get_kannada_piper_voice() if language == "kn" else self._get_piper_voice()
         fd, wav_path = tempfile.mkstemp(prefix="vision_tts_", suffix=".wav")
         os.close(fd)
         try:
@@ -362,11 +388,17 @@ class TTSManager:
                 try:
                     language = self.get_language()
                     spoken_text = self._translate_for_language(text, language)
-                    if language == "hi":
+                    if language in {"hi", "kn"}:
                         try:
-                            interrupted = self._play_piper(spoken_text, priority)
-                        except Exception as hindi_error:
-                            print(f"[TTS] Hindi Piper failed; using Windows speech fallback: {hindi_error}")
+                            interrupted = self._play_piper(
+                                spoken_text, priority, language=language
+                            )
+                        except Exception as piper_error:
+                            language_name = "Kannada" if language == "kn" else "Hindi"
+                            print(
+                                f"[TTS] Offline Piper {language} failed; "
+                                f"using Windows speech fallback for {language_name}: {piper_error}"
+                            )
                             interrupted = self._speak_async_and_wait(spoken_text, priority)
                     else:
                         interrupted = self._speak_async_and_wait(spoken_text, priority)

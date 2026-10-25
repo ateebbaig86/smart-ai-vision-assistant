@@ -47,7 +47,7 @@ flowchart TD
 - `Unified_Model_30ep.pt` — primary detector weights.
 - `INSTALL.txt` — fuller setup and troubleshooting notes.
 - `requirements.txt` — Python dependency reference.
-- - `tts-test/` and `indic-tts-main/models/` — local TTS model/configuration paths. Voice models are not necessarily included in the public repository; download each required model and its matching configuration from the original source.
+- `tts-test/` and `indic-tts-main/models/` — local TTS model/configuration paths. Voice models are not necessarily included in the public repository; download each required model and its matching configuration from the original source.
 
 ## Hardware
 

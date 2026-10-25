@@ -11,7 +11,7 @@ A wearable assistive-vision prototype combining an ESP32-CAM video stream, real-
 - **Open-vocabulary extension concept:** YOLO-World V2.1 S was evaluated as a separate specialist option for rare/additional concepts; it is not merged into the primary detector in this package.
 - **Proximity alerts:** HC-SR04 ultrasonic distance readings with configurable warning and critical thresholds.
 - **Face recognition:** InsightFace-based enrollment and recognition components. No personal face database is included.
-- **Speech output:** English through Windows native speech, Hindi through the bundled Piper voice, and Kannada through the configured Windows speech/fallback path when a suitable Kannada voice is installed.
+- **Speech output:** English through Windows native speech; Hindi and Kannada neural TTS are supported through their respective Piper-compatible ONNX voice models when the model files and matching configuration files are installed. The model files are obtained separately from their original sources; see the TTS setup and licensing notes below.
 - **Dashboard and events:** Flask web interface, centralized logging, and a thread-safe event bus.
 
 ## System overview
@@ -94,7 +94,18 @@ This quick start is a guide, not a guarantee that every dependency will install 
 
 ## Speech-language notes
 
-The application supports language selection for English (`en`), Hindi (`hi`), and Kannada (`kn`). The bundled neural Piper model is **Hindi** (`hi_IN-pratham-medium`). Kannada speech uses the Windows native speech/fallback path and therefore depends on an appropriate Kannada voice being installed and available on the target Windows system. The repository does not contain a separate Kannada neural voice model.
+The application supports language selection for English (`en`), Hindi (`hi`), and Kannada (`kn`). Hindi and Kannada neural text-to-speech can be configured using their respective Piper-compatible ONNX voice models and matching `.onnx.json` configuration files. The Hindi model is `hi_IN-pratham-medium`; the Kannada model is `kn_IN-syspin_male-medium`. These model files are not distributed with this repository and must be obtained separately from their original sources. See the links and licensing information below before downloading or using either model. English speech uses Windows native speech.
+
+### TTS model downloads and licensing
+
+Download each voice model and its matching `.onnx.json` configuration file from its original source:
+
+- **Hindi — Pratham, medium:** [Original model files](https://huggingface.co/rhasspy/piper-voices/tree/main/hi/hi_IN/pratham/medium)
+- **Kannada — SYSPIN, medium:** [Kannada model source](https://huggingface.co/micahchoo/piper-kn)
+
+Place the downloaded model and configuration files in the TTS model directory expected by your local configuration. Verify the configured paths before running the application.
+
+**Licensing:** These are third-party assets and are not covered automatically by this project's license. Review the original model cards, model licenses, dataset terms, and attribution requirements before use or redistribution. The Kannada model source notes unresolved licensing implications and recommends non-commercial use. Do not assume that free, open-source distribution of this project grants permission to redistribute the voice models.
 
 ## Privacy and security
 

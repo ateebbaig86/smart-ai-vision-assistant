@@ -102,6 +102,40 @@ if ($Missing.Count -gt 0) {
     throw "Required project assets are missing. Review the list above."
 }
 
+# Check Kannada TTS model and configuration, wherever they are stored under the project.
+Write-Host "`n=== KANNADA TTS ASSETS ===" -ForegroundColor Cyan
+$KannadaModel = Get-ChildItem -Path $Project -Recurse -File -Filter "*.onnx" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -match "kannada|kn_IN|kn-" } |
+    Select-Object -First 1
+
+$KannadaConfig = $null
+if ($null -ne $KannadaModel) {
+    $Sidecar = $KannadaModel.FullName + ".json"
+    if (Test-Path $Sidecar) {
+        $KannadaConfig = Get-Item $Sidecar
+    } else {
+        $KannadaConfig = Get-ChildItem -Path $Project -Recurse -File -Filter "*.onnx.json" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match "kannada|kn_IN|kn-" } |
+            Select-Object -First 1
+    }
+}
+
+if ($null -ne $KannadaModel) {
+    Write-Host ("PASS Kannada TTS model: " + $KannadaModel.FullName.Replace($Project + "\", "")) -ForegroundColor Green
+} else {
+    Write-Host "MISSING Kannada TTS .onnx model (filename must contain Kannada, kn_IN, or kn-)" -ForegroundColor Red
+    $Missing += "Kannada TTS .onnx model"
+}
+if ($null -ne $KannadaConfig) {
+    Write-Host ("PASS Kannada TTS config: " + $KannadaConfig.FullName.Replace($Project + "\", "")) -ForegroundColor Green
+} else {
+    Write-Host "MISSING Kannada TTS .onnx.json config" -ForegroundColor Red
+    $Missing += "Kannada TTS .onnx.json config"
+}
+if ($Missing.Count -gt 0) {
+    throw "Required project assets are missing. Review the list above."
+}
+
 Write-Host "`nALL CHECKS PASSED." -ForegroundColor Green
 Write-Host "No virtual environment was created and no packages were installed."
 Write-Host "Launch using the verified interpreter: python .\web_server.py"
